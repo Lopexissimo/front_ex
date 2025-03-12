@@ -6,7 +6,7 @@ const Api = {
     async getUsers() {
         try {
             const response = await axios.get(this.basicUrl, {
-                params: { page: 1, pagesize: 3 }
+                params: { page: 1, pagesize: 10 }
             });
             return response.data.results;
 

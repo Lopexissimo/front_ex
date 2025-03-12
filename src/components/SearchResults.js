@@ -22,7 +22,7 @@ export default function SearchResults(props) {
                         {
                             props.users.map((user,index) => {
                                 return (
-                                    <User user={user} index={index} onEdit={props.onEdit}/>
+                                    <User user={user} index={index} onEdit={props.onEdit} onDelete={props.onDelete}/>
                                 )
                             })
                         }

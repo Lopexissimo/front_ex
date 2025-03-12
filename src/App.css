@@ -3,12 +3,8 @@
 }
 .header{
     top:0;
-    text-align: center;
-}
-.footer{
-    position: fixed;
-    bottom: 0;
-    text-align: center;
+    height: 10vh;
+    justify-content: center;
 }
 .searchBar{
     display: flex;
