@@ -1,23 +1,36 @@
-import { TableCell, TableRow } from "@mui/material";
+import { IconButton, TableCell, TableRow } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit"
+import { useCallback, useState } from "react";
+import EditUser from './EditUser'
 
-export default function User(){
-/*
-    -   Props: oggetto utente / funzione di elimina/ funzione di modifica
-    -   le ultime due celle sono bottoni --> link a delete/modify page
-    -   L'id, nome e congome sono link alla userInfo page.
-*/
-    return(
-        <TableRow>
-            <TableCell></TableCell>
-            <TableCell></TableCell>
-            <TableCell></TableCell>
-            <TableCell></TableCell>
+export default function User(props) {
+    const [open, setOpen] = useState(false)
+
+    const handleClickOpen = () => {
+        setOpen(true)
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    return (<>
+        <TableRow key={props.index}>
+            <TableCell>{props.user.id}</TableCell>
+            <TableCell>{props.user.firstName}</TableCell>
+            <TableCell>{props.user.lastName}</TableCell>
+            <TableCell>{props.user.birthDate}</TableCell>
             <TableCell>
-                <Fab aria-label="edit"></Fab>
+
             </TableCell>
             <TableCell>
-                <Fab aria-label="delete"></Fab>
+                <IconButton onClick={handleClickOpen}>
+                    <EditIcon />
+                </IconButton>
+                <EditUser onEdit={props.onEdit} user={props.user} open={open} onClose={handleClose}/>
             </TableCell>
         </TableRow>
+
+    </>
     )
 }
