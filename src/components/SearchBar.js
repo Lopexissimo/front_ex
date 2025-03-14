@@ -1,4 +1,4 @@
-import { TextField, IconButton, InputAdornment } from "@mui/material";
+import { TextField, IconButton, InputAdornment, Box } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import { useCallback, useState } from "react";
 
@@ -15,10 +15,10 @@ export default function SearchBar(props) {
   }, [term, props.onSearch])
 
   return (
-    <div className="searchBar">
+    <Box className="searchBar" sx={{mt:'1.5rem'}}>
       <TextField
         InputProps={{
-          endAdornment: (
+          startAdornment: (
             <InputAdornment position="start">
               <IconButton onClick={search} color="primary">
                 <SearchIcon />
@@ -28,12 +28,11 @@ export default function SearchBar(props) {
         }}
         fullWidth
         id="cerca"
-        label="cerca"
+        label="Cerca"
         onChange={handleTermChange}
         onKeyDown={(e) => e.key === 'Enter' && search()}
-
       />
 
-    </div>
+    </Box>
   )
 }

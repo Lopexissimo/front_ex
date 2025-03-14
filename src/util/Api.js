@@ -12,7 +12,7 @@ const Api = {
 
         } catch (err) {
             console.error("Errore API:", err);
-            return null;
+            return false;
         }
     },
 
@@ -22,32 +22,33 @@ const Api = {
             return response.data.results;
         } catch (err) {
             console.error(`Errore caricamento user con ID: ${id}`, err);
-            return null;
+            return false;
         }
     },
+
     async addUser(user) {
         try {
             const response = await axios.post(this.basicUrl, user)
-            return response.data
+            return response;
         } catch (err) {
             console.error(`Errore creazione user con ID: ${user.id}`, err);
-            return null;
+            return false;
         }
     },
 
     async editUser(id, editedUser) {
         try {
-            const response = await axios.put(`${this.basicUrl}/${id}`, editedUser)
-            return response.data;
+            await axios.put(`${this.basicUrl}/${id}`, editedUser)
+            return true;
         } catch (err) {
             console.error(`Errore modifica user con ID: ${id}`, err);
-            return null;
+            return false;
         }
     },
 
     async deleteUser(id) {
         try {
-            const response = await axios.delete(`${this.basicUrl}/${id}`)
+            await axios.delete(`${this.basicUrl}/${id}`)
             return true;
         } catch (err) {
             console.error(`Errore eliminazione user con ID: ${id}`, err);

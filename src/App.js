@@ -1,43 +1,42 @@
-import { Button, Container } from '@mui/material';
+import { Button, Container, useMediaQuery } from '@mui/material';
 import Header from './components/Header';
-import Footer from './components/Footer';
 import AddUser from './components/AddUser';
-import EditUser from './components/EditUser';
-import UserInfo from './components/UserInfo.js'
-import { useState, useEffect, useCallback, use } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import SearchBar from './components/SearchBar';
 import SearchResults from './components/SearchResults';
+import MobileSearchResults from './components/mobile/MobileSearchResults';
 import Api from './util/Api';
 
 function App() {
+  const isMobile = useMediaQuery("(max-width:600px"); //4 visualization 
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([])
-  const [displayAddUser, setDisplayAddUser] = useState(false);
-  const [displayUserInfo, setDisplayUserInfo] = useState(false);
   const [openAddPage, setOpenAddPage] = useState(false)
+
   //fuction to open the addPage
   const handleClickOpen = () => {
     setOpenAddPage(true)
   }
-  //function to close the add page
+  //function to close the addPage
   const handleClose = () => {
     setOpenAddPage(false);
   }
-  //effect used to get the users from the API
+  //effect used to get the users from the API, just at the beginning
   useEffect(() => {
     const fillUsers = async () => {
-      console.log('Loading data');
+      //console.log('Loading data');
       const data = await Api.getUsers();
-      console.log(data)
+      //console.log(data)
       if (data.length > 0) {
-        console.log('dati ricevuti: ', data)
+        //console.log('dati ricevuti: ', data)
         setUsers(data);
         setFilteredUsers(data);
       }
     }
     fillUsers();
   }, []);
+
 
   //function to filter the users based on the seaarch term used
   const filterUsers = useCallback((term) => {
@@ -53,31 +52,52 @@ function App() {
     )
     setFilteredUsers(result);
     return;
-  }, [users, setUsers]);
+  }, [users]);
 
   //function to edit the user and update the modified user
   const editUser = useCallback(async (id, editedUser) => {
-    await Api.editUser(id, editedUser);
-    const updatedUsers = users.map(user => user.id === id ? editedUser : user)
-    setUsers(updatedUsers);
-  }, [users, Api])
+    const response = await Api.editUser(id, editedUser);
+    if (response) {
+      setUsers(prevUsers =>
+        prevUsers.map(user => (user.id === id ? editedUser : user))
+      );
+      setFilteredUsers(prevFilteredUsers =>
+        prevFilteredUsers.map(user => (user.id === id ? editedUser : user))
+      );
+    }
+  }, [users, filteredUsers])
 
   //function to delete user
-  const deleteUser = useCallback(async (id) =>{
-    await Api.deleteUser(id);
-    const updateUsers = users.filter(user => user.id != id)
-    setUsers(updateUsers);
+  const deleteUser = useCallback(async (id) => {
+    const result = await Api.deleteUser(id);
+    if (result) {
+      setUsers(prevUsers => prevUsers.filter(user => user.id !== id));
+      setFilteredUsers(prevFilteredUsers => prevFilteredUsers.filter(user => user.id !== id));
+    }
+  }, [users, filteredUsers])
+
+  //function to add user
+  const addUser = useCallback(async (user) => {
+    const response = await Api.addUser(user);
+    if (response) {
+      setUsers(prevUsers => [...prevUsers, { ...user, id: response.data }]);
+      setFilteredUsers(prevFilteredUsers => [...prevFilteredUsers, { ...user, id: response.data }]);
+    }
   })
 
   return (
     <Container className='container'>
       <Header />
       <SearchBar onSearch={filterUsers} />
-      <SearchResults users={filteredUsers} onEdit={editUser} onDelete={deleteUser} />
-      <Button onClick={handleClickOpen}>Aggiungi Utente</Button>
-      {
-        displayUserInfo && <UserInfo />
+      {isMobile ?
+        <MobileSearchResults users={filteredUsers} onEdit={editUser} onDelete={deleteUser} />
+        :
+        <SearchResults users={filteredUsers} onEdit={editUser} onDelete={deleteUser} />
       }
+      <Button onClick={handleClickOpen} color='primary' variant='contained' sx={{ mt: '2rem', mb: '100px' }}>
+        Aggiungi Utente
+      </Button>
+      <AddUser open={openAddPage} onClose={handleClose} onAdd={addUser} />
     </Container>
   );
 }

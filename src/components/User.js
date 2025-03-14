@@ -1,7 +1,7 @@
 import { IconButton, TableCell, TableRow } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit"
 import DeleteIcon from "@mui/icons-material/Delete"
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import EditUser from './EditUser'
 import DeleteUser from "./DeleteUser";
 
@@ -10,9 +10,9 @@ export default function User(props) {
     const [openDelete, setOpenDelete] = useState(false);
 
     const handleClickOpen = (type) => {
-        if(type === 'edit'){
+        if (type === 'edit') {
             setOpenEdit(true)
-        }else if(type === 'delete'){
+        } else if (type === 'delete') {
             setOpenDelete(true);
         }
     }
@@ -23,25 +23,20 @@ export default function User(props) {
     }
 
     return (<>
-        <TableRow key={props.index}>
-            <TableCell>{props.user.id}</TableCell>
-            <TableCell>{props.user.firstName}</TableCell>
-            <TableCell>{props.user.lastName}</TableCell>
-            <TableCell>{props.user.birthDate}</TableCell>
-            <TableCell>
-
-            </TableCell>
-            <TableCell>
-                <IconButton onClick={()=> handleClickOpen('edit')}>
+        <TableRow >
+            <TableCell sx={{ width: '30%' }}>{props.user.id}</TableCell>
+            <TableCell sx={{ width: '10%' }}>{props.user.firstName}</TableCell>
+            <TableCell sx={{ width: '10%' }}>{props.user.lastName}</TableCell>
+            <TableCell sx={{ width: '30%' }}>{props.user.birthDate}</TableCell>
+            <TableCell sx={{ width: '20%', textAlign: 'right' }}>
+                <IconButton onClick={() => handleClickOpen('edit')}>
                     <EditIcon />
                 </IconButton>
-                <EditUser onEdit={props.onEdit} user={props.user} open={openEdit} onClose={handleClose}/>
-            </TableCell>
-            <TableCell>
-                <IconButton  color="error" onClick={() => handleClickOpen('delete')}>
-                    <DeleteIcon/>
+                <EditUser onEdit={props.onEdit} user={props.user} open={openEdit} onClose={handleClose} />
+                <IconButton onClick={() => handleClickOpen('delete')}>
+                    <DeleteIcon />
                 </IconButton>
-                <DeleteUser onDelete={props.onDelete} open={openDelete} onClose={handleClose} id={props.user.id} />
+                <DeleteUser onDelete={props.onDelete} open={openDelete} onClose={handleClose} user={props.user} />
             </TableCell>
         </TableRow>
 

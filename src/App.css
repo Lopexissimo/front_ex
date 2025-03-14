@@ -1,11 +1,8 @@
-.container{
-    height: 100%;
+.header h3 {
+    padding-left: 0px;
+    font-weight: bold;
+    font-size: 2rem;
 }
-.header{
-    top:0;
-    height: 10vh;
-    justify-content: center;
-}
-.searchBar{
-    display: flex;
+.table tr{
+    border: 1px solid #ddd;
 }
