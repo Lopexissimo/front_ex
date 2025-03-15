@@ -3,12 +3,12 @@ import axios from 'axios';
 const Api = {
     basicUrl: 'http://kg00w4owgo0o8okwgk4w4g40.185.229.236.238.sslip.io/users',
 
-    async getUsers() {
+    async getUsers(pag) {
         try {
             const response = await axios.get(this.basicUrl, {
-                params: { page: 1, pagesize: 10 }
+                params: { page: pag, pagesize: 50 }
             });
-            return response.data.results;
+            return response.data;
 
         } catch (err) {
             console.error("Errore API:", err);
