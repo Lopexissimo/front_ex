@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Container, useMediaQuery } from '@mui/material';
+import { Button, CircularProgress, Container, LinearProgress, useMediaQuery, Box, Typography } from '@mui/material';
 import Header from './components/Header';
 import AddUser from './components/AddUser';
 import { useState, useEffect, useCallback } from 'react';
@@ -15,16 +15,15 @@ function App() {
   const [filteredUsers, setFilteredUsers] = useState([])
   const [openAddPage, setOpenAddPage] = useState(false)
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(0);
 
-//TO DOOOOOOOOOOOO
-/*
--tutti gli user vengono caricati
--abbellisci il caricamento
--serve ancora fare distinzione tra users e filteredusers???
--trova un modo per creare diverse pagine e visualizzare usando .slice()
--aggiungi caricamento anche alle ricerche se necessario
--rilggi consegna
-*/
+  //TO DOOOOOOOOOOOO
+  /*
+  -tutti gli user vengono caricati
+  -serve ancora fare distinzione tra users e filteredusers???
+  -trova un modo per creare diverse pagine e visualizzare usando .slice()
+  -rilggi consegna
+  */
 
   //fuction to open the addPage
   const handleClickOpen = () => {
@@ -41,12 +40,13 @@ function App() {
       let iterate = true;
       let data;
       let pag = 0;
+      let allUsers = []
       setIsLoading(true);
       while (iterate) {
         data = await Api.getUsers(pag);
         pag++;
         if (data.results.length > 0) {
-          setUsers(prevUsers => [...prevUsers, ...data.results]);
+          allUsers = [...allUsers, ...data.results]
           //setFilteredUsers(data.results);
         }
         if (!data.hasNextPage) {
@@ -54,30 +54,38 @@ function App() {
           setIsLoading(false);
         }
       }
+      setUsers(allUsers);
     }
     fillUsers();
+    setFilteredUsers(users)
   }, []);
 
-  //to log and see if all the users are actually logged
+  //function to re-render and update filteredUsers at the beginning
   useEffect(() => {
-    console.log('Users updated:', users);
-  }, [users]);
-  
+    setFilteredUsers(users);
+  }, [users])
 
   //function to filter the users based on the seaarch term used
   const filterUsers = useCallback((term) => {
-    if (!term) {
-      setFilteredUsers(users.slice(0,10));
-      return;
-    }
-    const lowerCaseTerm = term.toLowerCase();
-    const result = users.filter(user =>
-      user.id.includes(lowerCaseTerm) ||
-      (user.firstName && user.firstName.toLowerCase().includes(lowerCaseTerm)) ||
-      (user.lastName && user.lastName.toLowerCase().includes(lowerCaseTerm))
-    )
-    setFilteredUsers(result);
-    return;
+    setIsLoading(true);
+    setTimeout(() => {
+
+      if (!term) {
+        setFilteredUsers(users);
+        setIsLoading(false);
+        return;
+      }
+      const lowerCaseTerm = term.toLowerCase();
+      const result = users.filter(user =>
+        user.id.includes(lowerCaseTerm) ||
+        (user.firstName && user.firstName.toLowerCase().includes(lowerCaseTerm)) ||
+        (user.lastName && user.lastName.toLowerCase().includes(lowerCaseTerm))
+      )
+      setFilteredUsers(result);
+
+      setIsLoading(false);
+    }, 300)
+
   }, [users]);
 
   //function to edit the user and update the modified user
@@ -111,22 +119,42 @@ function App() {
     }
   })
 
+  //Function to show next page
+  const nextPage = useCallback(() => {
+    if (filteredUsers.length > page * 50 + 50) {
+      setPage(prevPage => prevPage + 1)
+    }
+  })
+  //function to show precedent Page
+  const prevPage = useCallback(() => {
+    if (page > 0) {
+      setPage(prevPage => prevPage - 1);
+    }
+  })
+
   return (
     <Container className='container'>
       <Header />
       <SearchBar onSearch={filterUsers} />
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         {
-          isLoading ? <CircularProgress sx={{width:'100%'}} /> : (
+          isLoading ? <CircularProgress sx={{ mt: '1rem' }} /> : (
             isMobile ?
-              <MobileSearchResults users={filteredUsers} onEdit={editUser} onDelete={deleteUser} />
+              <MobileSearchResults users={filteredUsers.slice(page * 50, page * 50 + 50)} onEdit={editUser} onDelete={deleteUser} />
               :
-              <SearchResults users={filteredUsers} onEdit={editUser} onDelete={deleteUser} />
+              <SearchResults users={filteredUsers.slice(page * 50, page * 50 + 50)} onEdit={editUser} onDelete={deleteUser} />
           )}
+        <Typography sx={{ mt: '1rem' }}>Total results: {filteredUsers.length}  | Page number: {page} </Typography>
+        <Box sx={{ display: 'flex', mt: '1rem' }}>
+          <Button sx={{ textTransform: 'none' }} onClick={prevPage}>Previous</Button>
+          <Button sx={{ textTransform: 'none' }} onClick={nextPage}>Next</Button>
+        </Box>
         <Button onClick={handleClickOpen} color='primary' variant='contained' sx={{ mt: '2rem', mb: '100px' }}>
           Aggiungi Persona
         </Button>
+      </Box>
       <AddUser open={openAddPage} onClose={handleClose} onAdd={addUser} />
-    </Container>
+    </Container >
   );
 }
 
