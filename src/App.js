@@ -19,10 +19,9 @@ function App() {
 
   //TO DOOOOOOOOOOOO
   /*
-  -tutti gli user vengono caricati
-  -serve ancora fare distinzione tra users e filteredusers???
-  -trova un modo per creare diverse pagine e visualizzare usando .slice()
-  -rilggi consegna
+  -merge dei branch
+  -restrizioni su Modifica/ aggiunta persone nei dai
+  -test
   */
 
   //fuction to open the addPage
@@ -82,7 +81,7 @@ function App() {
         (user.lastName && user.lastName.toLowerCase().includes(lowerCaseTerm))
       )
       setFilteredUsers(result);
-
+      setPage(0);
       setIsLoading(false);
     }, 300)
 

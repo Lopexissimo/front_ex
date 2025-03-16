@@ -65,6 +65,7 @@ export default function EditUser({ user, open, onClose, onEdit }) {
                         value={dayjs(userData.birthDate)}
                         onChange={handleDateChange}
                         slotProps={{ textField: { fullWidth: true, margin: "dense" } }}
+                        maxDate={dayjs("2025-02-13")} 
                     />
                 </LocalizationProvider>
 

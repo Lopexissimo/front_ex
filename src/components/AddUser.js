@@ -44,7 +44,7 @@ export default function AddUser({ open, onClose, onAdd }) {
 
     return (
         <Dialog className="addUserPage" onClose={onClose} open={open}>
-            <DialogTitle sx={{fontWeight:'bold'}}>Aggiungi persona </DialogTitle>
+            <DialogTitle sx={{ fontWeight: 'bold' }}>Aggiungi persona </DialogTitle>
             <DialogContent>
                 <TextField name="firstName" label="Nome" value={userData.firstName} onChange={handleChange} fullWidth margin="dense" />
                 <TextField name="lastName" label="Cognome" value={userData.lastName} onChange={handleChange} fullWidth margin="dense" />
@@ -56,10 +56,11 @@ export default function AddUser({ open, onClose, onAdd }) {
                         value={dayjs(userData.birthDate)}
                         onChange={handleDateChange}
                         slotProps={{ textField: { fullWidth: true, margin: "dense" } }}
+                        maxDate={dayjs("2025-02-13")}
                     />
                 </LocalizationProvider>
 
-                <Select name="userType" laber='Tipologia'  value={userData.userType} onChange={handleChange} fullWidth margin="dense">
+                <Select name="userType" laber='Tipologia' value={userData.userType} onChange={handleChange} fullWidth margin="dense">
                     <MenuItem value="Customer">Customer</MenuItem>
                     <MenuItem value="Worker">Worker</MenuItem>
                     <MenuItem value="Admin">Admin</MenuItem>
