@@ -7,13 +7,13 @@ The goal is visualize and interact with some People data obatined throught an ex
 -   Axios for handling API requests
 
 # Setup and Running the Project
-1-> Clone th erepository:
+-   Clone the erepository:
     `git clone https://github.com/Lopexissimo/front_ex.git`
-2-> install dependencies
+-   install dependencies
     `npm install`
-3-> start the project locally
+-   start the project locally
     `npm start`
-4-> open http://localhost:3000 to see the page
+-   open http://localhost:3000 to see the page
 
 # API Integration
 /src/util/Api.js
