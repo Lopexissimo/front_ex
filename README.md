@@ -1,5 +1,5 @@
 ## Description
-The goal is visualize and interact with some People data obatined throught an external API.
+The goal is visualize and interact with some people datas obatined throught an external API.
 
 ## Technologies Used
 -   React 
