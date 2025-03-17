@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Container, LinearProgress, useMediaQuery, Box, Typography } from '@mui/material';
+import { Button, CircularProgress, Container, LinearProgress, useMediaQuery, Box, Typography, TextField } from '@mui/material';
 import Header from './components/Header';
 import AddUser from './components/AddUser';
 import { useState, useEffect, useCallback } from 'react';
@@ -6,8 +6,8 @@ import './App.css';
 import SearchBar from './components/SearchBar';
 import SearchResults from './components/SearchResults';
 import MobileSearchResults from './components/mobile/MobileSearchResults';
+import PageHandler from './components/PageHandler'
 import Api from './util/Api';
-import { DisplaySettings } from '@mui/icons-material';
 
 function App() {
   const isMobile = useMediaQuery("(max-width:600px"); //4 visualization 
@@ -16,13 +16,6 @@ function App() {
   const [openAddPage, setOpenAddPage] = useState(false)
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(0);
-
-  //TO DOOOOOOOOOOOO
-  /*
-  -merge dei branch
-  -restrizioni su Modifica/ aggiunta persone nei dai
-  -test
-  */
 
   //fuction to open the addPage
   const handleClickOpen = () => {
@@ -46,7 +39,6 @@ function App() {
         pag++;
         if (data.results.length > 0) {
           allUsers = [...allUsers, ...data.results]
-          //setFilteredUsers(data.results);
         }
         if (!data.hasNextPage) {
           iterate = false;
@@ -56,7 +48,6 @@ function App() {
       setUsers(allUsers);
     }
     fillUsers();
-    setFilteredUsers(users)
   }, []);
 
   //function to re-render and update filteredUsers at the beginning
@@ -64,7 +55,7 @@ function App() {
     setFilteredUsers(users);
   }, [users])
 
-  //function to filter the users based on the seaarch term used
+  //function to filter the users based on the search term used
   const filterUsers = useCallback((term) => {
     setIsLoading(true);
     setTimeout(() => {
@@ -81,9 +72,9 @@ function App() {
         (user.lastName && user.lastName.toLowerCase().includes(lowerCaseTerm))
       )
       setFilteredUsers(result);
-      setPage(0);
       setIsLoading(false);
     }, 300)
+    setPage(0);
 
   }, [users]);
 
@@ -120,16 +111,22 @@ function App() {
 
   //Function to show next page
   const nextPage = useCallback(() => {
-    if (filteredUsers.length > page * 50 + 50) {
+    if (filteredUsers.length > page * 25 + 25) {
       setPage(prevPage => prevPage + 1)
+      window.scrollTo({ top: 0 })
     }
   })
   //function to show precedent Page
   const prevPage = useCallback(() => {
     if (page > 0) {
       setPage(prevPage => prevPage - 1);
+      window.scrollTo({ top: 0 })
     }
   })
+  //function to set and visit a precise page
+  const handlePageNumber = (e) => {
+    setPage(Number(e.target.value));
+  }
 
   return (
     <Container className='container'>
@@ -139,15 +136,11 @@ function App() {
         {
           isLoading ? <CircularProgress sx={{ mt: '1rem' }} /> : (
             isMobile ?
-              <MobileSearchResults users={filteredUsers.slice(page * 50, page * 50 + 50)} onEdit={editUser} onDelete={deleteUser} />
+              <MobileSearchResults users={filteredUsers.slice(page * 25, page * 25 + 25)} onEdit={editUser} onDelete={deleteUser} />
               :
-              <SearchResults users={filteredUsers.slice(page * 50, page * 50 + 50)} onEdit={editUser} onDelete={deleteUser} />
+              <SearchResults users={filteredUsers.slice(page * 25, page * 25 + 25)} onEdit={editUser} onDelete={deleteUser} />
           )}
-        <Typography sx={{ mt: '1rem' }}>Total results: {filteredUsers.length}  | Page number: {page} </Typography>
-        <Box sx={{ display: 'flex', mt: '1rem' }}>
-          <Button sx={{ textTransform: 'none' }} onClick={prevPage}>Previous</Button>
-          <Button sx={{ textTransform: 'none' }} onClick={nextPage}>Next</Button>
-        </Box>
+        <PageHandler page={page} handlePageNumber={handlePageNumber} filteredUsers={filteredUsers} prevPage={prevPage} nextPage={nextPage} />
         <Button onClick={handleClickOpen} color='primary' variant='contained' sx={{ mt: '2rem', mb: '100px' }}>
           Aggiungi Persona
         </Button>

@@ -16,7 +16,7 @@ export default function EditUser({ user, open, onClose, onEdit }) {
         userType: "Customer"
     }
     const [userData, setUserData] = useState(resetData);
-
+    //effect to fill userData
     useEffect(() => {
         setUserData({
             id: user.id || "",
